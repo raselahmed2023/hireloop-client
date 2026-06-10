@@ -65,7 +65,7 @@ export default function Navbar() {
 
           {isPending ? (
 
-            <div className="h-8 w-24 bg-white/5 animate-pulse rounded-lg mx-2" />
+            <div className="h-8 w-24 bg-white/4 animate-pulse rounded-lg mx-2" />
           ) : user ? (
 
             <div className="flex items-center gap-3">
