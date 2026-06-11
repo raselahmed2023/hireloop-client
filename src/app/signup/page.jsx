@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { Radio, RadioGroup } from "@heroui/react";
 import { Button, Card, Form, Input, Label, TextField } from "@heroui/react";
 import { authClient } from "@/lib/auth-client";
 
@@ -9,18 +10,19 @@ export default function SignupPage() {
   const router = useRouter();
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
+  const [role, setRole]=useState('seeker')
 
-  // ফর্ম সাবমিট হ্যান্ডলার (জাভাস্ক্রিপ্ট অ্যাপ্রোচ)
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError("");
-    
+
     const formData = new FormData(e.currentTarget);
     const name = formData.get("name")?.toString() || "";
     const email = formData.get("email")?.toString() || "";
     const password = formData.get("password")?.toString() || "";
 
-   
+
     if (!name || !email || !password) {
       setError("Fill up all the room");
       return;
@@ -29,13 +31,13 @@ export default function SignupPage() {
       setError("Password must be 8 characters long");
       return;
     }
-
     setLoading(true);
 
     try {
       const { error: authError } = await authClient.signUp.email({
         name,
         email,
+        role,
         password,
       });
 
@@ -54,7 +56,7 @@ export default function SignupPage() {
   return (
     <div className="min-h-screen flex items-center justify-center bg-[#0F0F1A] px-4 selection:bg-[#7C5CBF]/30">
       <Card className="w-full max-w-sm p-6 bg-[#13131F]/90 backdrop-blur-md border border-white/10 shadow-2xl">
-        
+
         <Card.Header className="flex flex-col items-center pb-4 text-center">
           <Card.Title className="text-2xl font-bold text-white tracking-wide">
             Create Account
@@ -66,7 +68,7 @@ export default function SignupPage() {
 
         <Form onSubmit={handleSubmit} className="flex flex-col gap-4">
           <Card.Content className="w-full flex flex-col gap-4">
-            
+
             {error && (
               <div className="text-sm text-red-400 bg-red-500/10 border border-red-500/20 py-2 px-3 rounded-xl text-center font-medium">
                 {error}
@@ -76,9 +78,9 @@ export default function SignupPage() {
             {/* Name Input */}
             <TextField name="name" type="text">
               <Label className="text-white/70 text-sm font-medium mb-1">Name</Label>
-              <Input 
-                placeholder="Your name" 
-                variant="secondary" 
+              <Input
+                placeholder="Your name"
+                variant="secondary"
                 className="bg-[#1A1A2E] border-white/10 text-white placeholder:text-white/30"
               />
             </TextField>
@@ -86,9 +88,9 @@ export default function SignupPage() {
             {/* Email Input */}
             <TextField name="email" type="email">
               <Label className="text-white/70 text-sm font-medium mb-1">Email</Label>
-              <Input 
-                placeholder="you@example.com" 
-                variant="secondary" 
+              <Input
+                placeholder="you@example.com"
+                variant="secondary"
                 className="bg-[#1A1A2E] border-white/10 text-white placeholder:text-white/30"
               />
             </TextField>
@@ -96,13 +98,40 @@ export default function SignupPage() {
             {/* Password Input */}
             <TextField name="password" type="password">
               <Label className="text-white/70 text-sm font-medium mb-1">Password</Label>
-              <Input 
-                placeholder="Min. 8 characters" 
-                variant="secondary" 
+              <Input
+                placeholder="Min. 8 characters"
+                variant="secondary"
                 className="bg-[#1A1A2E] border-white/10 text-white placeholder:text-white/30"
               />
             </TextField>
           </Card.Content>
+
+          {/* role selection */}
+          <div className="flex flex-col gap-4">
+            
+            <RadioGroup defaultValue="seeker" name="role" onChange={value=>setRole(value)}
+            orientation="horizontal">
+
+              <Radio value="seeker">
+                <Radio.Control>
+                  <Radio.Indicator />
+                </Radio.Control>
+                <Radio.Content>
+                  <Label className="text-white">Job Seeker</Label>
+                </Radio.Content>
+              </Radio>
+
+              <Radio value="recruiter">
+                <Radio.Control>
+                  <Radio.Indicator />
+                </Radio.Control>
+                <Radio.Content>
+                  <Label className="text-white">Recruiter</Label>
+                </Radio.Content>
+              </Radio>
+
+            </RadioGroup>
+          </div>
 
           <Card.Footer className="mt-2 flex flex-col gap-4 w-full">
             <Button
